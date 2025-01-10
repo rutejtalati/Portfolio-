@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Portfolio with Tiles + Language Toggle</title>
+
+  <!-- SCROLL INDICATOR ICON LIBRARY (OPTIONAL) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  <!-- FONT AWESOME (CDN) -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    integrity="sha512-ac/Ynl2+ql6ZbkgX0Z2f2WS2Ds9qLamRsyfZBq4Yg4eDHS1qK5roUBjqKaTihPChAzK4bqvr6b0U4+72fjcFg=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+
+  <!-- TYPED.JS (CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+
+  <style>
+    /*************************************************************
+     * RESET & CONTAINER
+     *************************************************************/
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /*************************************************************
+     * THEME: dark-mode (default) / light-mode
+     *************************************************************/
+    body {
+      background-color: #000; /* default dark */
+      color: #fff;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+      transition: background-color 0.4s, color 0.4s;
+      font-family: 'Calibri', 'Arial', sans-serif;
+    }
+    body.light-mode {
+      background-color: #fff; 
+      color: #000;
+    }
+
+    /* For paragraphs: justify text, center the last line, bigger text */
+    p {
+      text-align: justify; 
+      text-align-last: center; 
+      word-spacing: normal;
+      font-size: 1.1rem;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /*************************************************************
+     * SCROLL INDICATOR
+     *************************************************************/
+    /*************************************************************
+ * SCROLL INDICATOR - with car emoji and black/yellow colors
+ *************************************************************/
+.progress-container {
+  width: 100%;
+  height: 16px; /* Increased height for better visibility */
+  background: black;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+}
+
+.progress-bar {
+  height: 16px;
+  background: yellow;
+  width: 0%;
+  position: relative;
+}
+
+.progress-car {
+  position: absolute;
+  right: -20px; /* Adjusts car emoji position */
+  top: 0;
+  font-size: 20px;
+  line-height: 16px;
+}
+
+
+    /*************************************************************
+     * HEADER
+     *************************************************************/
+    .header {
+      position: fixed;
+      top: 0;
+      z-index: 999;
+      width: 100%;
+      background-color: rgba(0,0,0,0.9);
+      border-bottom: 1px solid #333;
+      transition: background 0.4s;
+      display: flex;
+      flex-direction: column;
+    }
+    body.light-mode .header {
+      background-color: rgba(255,255,255,0.9);
+      border-bottom: 1px solid #aaa;
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 40px;
+    }
+    .logo {
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 1.5rem;
+    }
+    nav a {
+      transition: color 0.3s;
+    }
+    nav a:hover {
+      color: #00A0FF;
+    }
+
+    .toggles {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .toggle-btn {
+      cursor: pointer;
+      font-weight: bold;
+      background: #444;
+      border: none;
+      color: #fff;
+      padding: 8px 15px;
+      border-radius: 4px;
+      transition: background 0.3s, color 0.3s;
+    }
+    .toggle-btn:hover {
+      background: #333;
+    }
+    body.light-mode .toggle-btn {
+      background: #ccc;
+      color: #000;
+    }
+    body.light-mode .toggle-btn:hover {
+      background: #bbb;
+    }
+    .dateTimeGreeting {
+      font-size: 0.9rem;
+      margin-right: 10px;
+      color: #aaa;
+    }
+    body.light-mode .dateTimeGreeting {
+      color: #666;
+    }
+
+    /*************************************************************
+     * HERO
+     *************************************************************/
+    .hero {
+      width: 100%;
+      height: 100vh;
+      margin-top: 60px; 
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .profile-pic {
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 20px;
+      border: 2px solid #fff;
+    }
+    body.light-mode .profile-pic {
+      border: 2px solid #000;
+    }
+    .typed-line {
+      font-size: 1.4rem; 
+      margin: 8px 0;
+      text-align: center;
+    }
+
+    /* Larger tiles for Resume (red) + Fun Fact (yellow) */
+    .resume-btn, .funfact-btn {
+      display: inline-block;
+      padding: 16px 40px; 
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 1em;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+    .resume-btn {
+      background-color: red;
+      color: #fff;
+    }
+    .resume-btn:hover {
+      background-color: #cc0000; 
+      transform: scale(1.05);
+    }
+    .funfact-btn {
+      background-color: yellow;
+      color: #000;
+    }
+    .funfact-btn:hover {
+      background-color: #fadb00; 
+      transform: scale(1.05);
+    }
+
+    #heroPara {
+      margin-top: 10px;
+      max-width: 600px;
+      line-height: 1.5em;
+      text-align-last: center;
+    }
+    .scroll-down {
+      margin-top: 40px;
+      font-size: 2rem;
+      cursor: pointer;
+      animation: bounce 1.5s infinite;
+    }
+    @keyframes bounce {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(10px); }
+      100% { transform: translateY(0); }
+    }
+
+    /*************************************************************
+     * BACKGROUND IMAGES
+     *************************************************************/
+    #education {
+      background: url('education.jpg') no-repeat center/cover;
+    }
+    #experience {
+      background: url('experience.jpg') no-repeat center/cover;
+    }
+    #projects {
+      background: url('projects.jpg') no-repeat center/cover;
+    }
+    #skills {
+      background: url('skills.jpg') no-repeat center/cover;
+    }
+    #contact {
+      background: url('contact.jpg') no-repeat center/cover;
+    }
+
+    /*************************************************************
+     * SECTION STYLES
+     *************************************************************/
+    section {
+      min-height: 60vh;
+      padding: 60px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    section h2 {
+      font-size: 1.7rem;
+      font-weight: bold;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    /*************************************************************
+     * CONTACT TILES (bottom of contact section)
+     *************************************************************/
+    .contact-tiles {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      margin-top: 30px;
+      flex-wrap: wrap;
+    }
+    .contact-tile {
+      border-radius: 8px;
+      width: 70px;
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.3s, transform 0.3s;
+      color: #fff;
+      font-size: 1.4rem; 
+    }
+    .contact-tile:hover {
+      transform: scale(1.1);
+    }
+    body.light-mode .contact-tile {
+      color: #000;
+      filter: brightness(1.2);
+    }
+    .tile-mail { background: #e91e63; }
+    .tile-usa  { background: #f44336; }
+    .tile-india{ background: #ff9800; }
+    .tile-ln   { background: #3f51b5; }
+
+    /*************************************************************
+     * BACK TO TOP - center at bottom
+     *************************************************************/
+    .back-to-top {
+      text-align: center;
+      font-weight: bold;
+      cursor: pointer;
+      background: #444;
+      padding: 10px 20px;
+      border-radius: 4px;
+      color: #fff;
+      transition: background 0.3s;
+      margin: 20px auto; 
+      display: block;    
+      width: fit-content;
+    }
+    .back-to-top:hover {
+      background: #333;
+    }
+    body.light-mode .back-to-top {
+      background: #ccc;
+      color: #000;
+    }
+    body.light-mode .back-to-top:hover {
+      background: #bbb;
+    }
+
+    /*************************************************************
+     * FOOTER
+     *************************************************************/
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: #000;
+      color: #999;
+      border-top: 1px solid #333;
+      transition: background 0.4s;
+    }
+    body.light-mode footer {
+      background: #fff;
+      color: #555;
+      border-top: 1px solid #ccc;
+    }
+    .footer-text {
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    /*************************************************************
+     * FUN FACTS MODAL - fun popIn animation
+     *************************************************************/
+     .modal-overlay {
+  position: fixed;
+  top: 0; 
+  left: 0;
+  width: 100vw; 
+  height: 100vh;
+  background-color: rgba(0,0,0,0.7);
+  display: none; 
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.modal-content {
+  background-color: #FFFF00;
+  font-family: 'Comic Sans MS', cursive;
+  font-size: 1.2rem;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 600px;
+  width: 90%;
+  color: #000;
+  transform: scale(0.01);
+  animation: popIn 0.5s ease-out forwards;
+
+  /* New: set a max-height and use flex to allow for a scrollable section */
+  max-height: 80vh; /* Adjust as needed */
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes popIn {
+  0% {
+    transform: scale(0.01);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.modal-content h2 {
+  margin-bottom: 10px;
+}
+
+/* New: create a scrollable container for the main text */
+.modal-scroll-content {
+  overflow-y: auto;
+  flex: 1; /* fills all remaining vertical space */
+}
+
+.modal-content p {
+  line-height: 1.5;
+  margin: 10px 0;
+}
+
+.modal-close-btn {
+  display: inline-block;
+  padding: 8px 15px;
+  background: #444;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.modal-close-btn:hover {
+  background: #333;
+}
+
+body.light-mode .modal-close-btn {
+  background: #ccc;
+  color: #000;
+}
+
+body.light-mode .modal-close-btn:hover {
+  background: #bbb;
+}
+
+    /*************************************************************
+     * SEARCH BUTTON (bottom-right) 
+     *************************************************************/
+     .ask-me-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  z-index: 9999;
+  transition: transform 0.3s;
+}
+
+.ask-me-btn:hover {
+  transform: scale(1.1);
+}
+
+
+    /*************************************************************
+     * GERMAN BUTTON (near toggles)
+     *************************************************************/
+    .german-btn {
+      cursor: pointer;
+      font-weight: bold;
+      background: #444;
+      color: #fff;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 4px;
+      transition: background 0.3s;
+    }
+    .german-btn:hover {
+      background: #333;
+    }
+    body.light-mode .german-btn {
+      background: #ccc;
+      color: #000;
+    }
+    body.light-mode .german-btn:hover {
+      background: #bbb;
+    }
+
+    /* highlight for search results if needed */
+    .highlight {
+      background: yellow;
+      color: black;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body onscroll="moveIndicator()">
+  <div class="header">
+    <div class="progress-container">
+        <div class="progress-bar" id="myBar">
+          <span class="progress-car">⚙️</span>
+        </div>
+      </div>
+      
+      
+    <div class="header-content">
+      <div class="logo" id="logoEl">Rutej Talati</div>
+      <nav>
+        <ul>
+          <li><a href="#education" id="navEducation">Education</a></li>
+          <li><a href="#experience" id="navExperience">Experience</a></li>
+          <li><a href="#projects" id="navProjects">Projects</a></li>
+          <li><a href="#skills" id="navSkills">Skills</a></li>
+          <li><a href="#contact" id="navContact">Contact</a></li>
+        </ul>
+      </nav>
+      <div class="toggles">
+        <div class="dateTimeGreeting" id="dateTimeGreeting"></div>
+        <button class="german-btn" id="langToggleBtn">DE</button>
+        <button class="toggle-btn" id="themeToggleBtn">Dark/Light</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEARCH BUTTON BOTTOM-RIGHT -->
+  <!-- SEARCH BUTTON BOTTOM-RIGHT -->
+<button class="ask-me-btn" id="searchBtn">🔍</button>
+
+  <!-- HERO -->
+  <div class="hero container">
+    <img src="profile.jpg" alt="Profile Picture" class="profile-pic" />
+
+    <div class="typed-line" id="typed1"></div>
+    <div class="typed-line" id="typed2"></div>
+    <div class="typed-line" id="typed3"></div>
+
+    <div class="buttons-row">
+      <a class="resume-btn" href="resume.pdf" target="_blank" id="resumeBtn">Resume</a>
+      <button class="funfact-btn" id="funFactBtn">Fun Fact</button>
+    </div>
+
+    <p id="heroPara">
+      If you're in a rush, you can download my resume by clicking the button. <br/>
+      Otherwise, enjoy my online curriculum vitae!
+    </p>
+    <div class="scroll-down" onclick="document.getElementById('education').scrollIntoView({behavior:'smooth'});">
+      &darr;
+    </div>
+  </div>
+
+ <!-- EDUCATION SECTION -->
+<section id="education" class="container">
+    <h2 id="eduTitle">Education</h2>
+  
+    <style>
+      /* Left align subheadings */
+      h2 {
+        text-align: left;
+        margin: 20px 0;
+      }
+  
+      /* Apply text-align-last to paragraphs */
+      p {
+        text-align: justify;
+        text-align-last: left;
+        margin-bottom: 10px;
+      }
+    </style>
+  
+    <p id="eduParagraph1">
+      <strong>University</strong><br /><br />
+      At Pennsylvania State University, University Park, PA, I am pursuing a Bachelor of Science in Mechanical Engineering with a Minor in Physics and maintaining a GPA of 3.50. My expected graduation is in December 2025. I have been recognized for academic excellence, earning a spot on the Dean’s List for Fall 2022, Summer 2023, and Summer 2024. My time at Penn State has allowed me to build a strong foundation in mechanical engineering principles, computational tools, and experimental techniques. I have actively participated in innovative projects that integrate mechanical systems with renewable energy solutions and advanced aerodynamics, further honing my analytical and problem-solving skills. Penn State’s vibrant academic environment and state-of-the-art facilities have provided numerous opportunities for professional growth and development.
+    </p>
+    <br/><br/>
+    <p id="eduParagraph2">
+      <strong>High School</strong><br /><br />
+      I completed my Cambridge A-Levels at SVKM International School, Mumbai, India, graduating in 2022. During my time at SVKM, I achieved first place in the prestigious Cambridge Science Olympiad in 2019, demonstrating my ability to tackle complex science and engineering challenges. My advanced coursework in Physics, Mathematics, and Chemistry prepared me for the rigorous demands of higher education. In addition to my academic achievements, I actively participated in STEM education initiatives and innovation-focused activities, contributing to my school’s culture of academic excellence and creative problem-solving.
+    </p>
+  </section>
+  
+  
+  
+  
+<!-- EXPERIENCE SECTION -->
+<section id="experience" class="container">
+    <h2 id="expTitle">Experience</h2>
+  
+    <style>
+      /* Left align subheadings */
+      h2 {
+        text-align: left;
+        margin: 20px 0;
+      }
+  
+      /* Apply text-align-last to paragraphs */
+      p {
+        text-align: justify;
+        text-align-last: left;
+        margin-bottom: 10px;
+      }
+    </style>
+  
+    <p id="expParagraph1">
+      <strong>Engineering Research Intern</strong><br />
+      Polygence, Inc. – Portland, Oregon<br />
+      August 2021 – March 2022<br /><br />
+      During my internship at Polygence, I worked on cutting-edge aerodynamic research focused on improving the performance and safety of Formula 1 vehicles and renewable energy systems. Utilizing ANSYS Fluent for CFD simulations, I analyzed turbulent and laminar airflow around vehicle components like the front wing to optimize aerodynamic efficiency. These simulations informed modifications to enhance downforce while reducing drag, contributing to more stable and high-performing designs for extreme racing conditions.
+    </p>
+    <p>
+      Additionally, I employed MATLAB to model and analyze stress distributions on the front wing under varying flow conditions, ensuring the designs met durability requirements. For renewable energy applications, I used SolidWorks and MATLAB to design and optimize wind turbine blades, focusing on increasing energy capture and structural integrity. My research extended into quantum-based innovations, where I explored aerodynamic implications of emerging materials.
+    </p>
+    <p>
+      This research culminated in a published paper on Formula 1 Aerodynamics on ResearchGate, showcasing innovative solutions to airflow challenges. My contributions were recognized with the Young Polygence Research Excellence Award, highlighting the impact of my work on improving simulation accuracy and practical applications in high-speed aerodynamics.
+    </p>
+  
+    <p id="expParagraph2">
+      <strong>Teaching Assistant (Mechanical Engineering)</strong><br />
+      Pennsylvania State University, University Park, PA<br />
+      May 2024 – Present<br /><br />
+      As a Teaching Assistant for the Mechanical Engineering Department, I conducted multiple review sessions for students to prepare for examinations in subjects such as thermodynamics and computational tools. These sessions involved breaking down complex theoretical concepts, solving practice problems, and providing students with strategies to approach challenging questions. My goal was to enhance their understanding and confidence in applying these principles.
+    </p>
+    <p>
+      During lab sessions, I demonstrated the use of engineering software such as SolidWorks for 3D modeling and simulation, helping students design and validate mechanical components. Additionally, I guided students through thermodynamics experiments, including analyzing heat transfer in finned systems and measuring the efficiency of a Rankine cycle setup. I provided insights into experimental design, data collection, and the practical implications of thermodynamic principles in real-world systems.
+    </p>
+    <p>
+      These hands-on experiences not only strengthened the students’ technical skills but also enabled them to draw connections between theoretical knowledge and practical applications, fostering a deeper understanding of mechanical engineering concepts.
+    </p>
+  
+    <p id="expParagraph3">
+      <strong>Teaching Assistant (Physics)</strong><br />
+      Pennsylvania State University, University Park, PA<br />
+      January 2024 – Present<br /><br />
+      As a Teaching Assistant for the Physics Department, I conducted office hours to support students in mastering advanced topics in quantum mechanics and relativity. I worked closely with students to help them understand principles such as time dilation, the infinite square well equation, and the Schrödinger equation, breaking down complex mathematical formulations into accessible concepts. I guided students through solving equations, visualizing quantum states, and applying these principles to real-world physics problems.
+    </p>
+    <p>
+      To provide a hands-on learning experience, I organized review sessions during the semester. One notable session included a visit to the Friedman Observatory at Penn State, where I demonstrated the practical implications of time dilation by observing satellites and discussing their behavior in orbit relative to Earth’s frame of reference. During this session, I also introduced students to concepts related to cosmic background radiation, connecting it to quantum fluctuations in the early universe. These immersive experiences helped students bridge theoretical knowledge with observable phenomena, fostering a deeper appreciation of modern physics.
+    </p>
+    <p>
+      Through these efforts, I enhanced student engagement and understanding of some of the most foundational and exciting topics in physics, ensuring they were well-prepared for examinations and further studies in the field.
+    </p>
+  </section>
+  <!-- PROJECTS SECTION -->
+<section id="projects" class="container">
+    <h2 id="projTitle">Projects</h2>
+  
+    <style>
+      /* Left align subheadings */
+      h3 {
+        text-align: left;
+        margin: 20px 0;
+      }
+  
+      /* Apply text-align-last to paragraphs */
+      p {
+        text-align: justify;
+        text-align-last: left;
+        margin-bottom: 10px;
+      }
+    </style>
+  
+    <h3>Energy-Efficient Mining Truck Challenge – Wabtec Corporation</h3>
+    <p id="projParagraph1">
+      As part of a course at Penn State University, I was tasked with developing a sustainable model for Wabtec mining trucks that reduced their dependency on fossil fuels while incorporating innovative energy solutions. I named this project CATBAT, emphasizing the integration of catenary wires and battery power for sustainable operations.
+    </p>
+    <p>
+      Through extensive research and consultations with professors and assistant professors specializing in energy systems, I evaluated various renewable energy sources and narrowed the options down to piezoelectricity and biofuels. Ultimately, I chose piezoelectricity for its innovative, sustainable, and self-sufficient characteristics.
+    </p>
+    <p>
+      For this project, I designed a system that incorporated piezoelectric plates into the massive tires of the mining truck. These plates harnessed the pressure generated within the tires during operation to produce electricity, which was stored in onboard lithium-ion batteries. This system provided reliable energy capable of powering the truck at speeds of up to 40 km/h while serving as a backup for off-grid operations.
+    </p>
+    <p>
+      To further enhance sustainability, the CATBAT system integrated a flexible pantograph arm connected to overhead catenary wires. This extendable arm allowed for efficient energy transfer from external sources to the truck, ensuring continuous operation while reducing reliance on fossil fuels. To support the system, I proposed telescopic support poles to suspend the wires at a height of approximately 30 feet, enabling quick installation and scalability for various mining sites.
+    </p>
+    <p>
+      The combination of piezoelectricity, lithium-ion batteries, and the catenary system significantly reduced the truck's environmental impact and operational costs. Using SolidWorks, I modeled the truck components and systems, ensuring mechanical stability and feasibility. MATLAB simulations were employed to analyze energy efficiency, system durability, and stress distributions, validating the design's practicality.
+    </p>
+    <p>
+      This innovative project was recognized for its potential to revolutionize the sustainability of heavy industrial vehicles. I was honored to present CATBAT to the entire engineering department and Wabtec Corporation officials, receiving praise for its creativity, feasibility, and transformative impact on mining operations.
+    </p>
+  
+    <h3>Research on the Aerodynamics of Formula 1 Cars</h3>
+    <p id="projParagraph2">
+      My passion for Formula 1 and its challenges in ensuring safer racing inspired me to embark on this project during high school. The project focused on addressing the issue of turbulent wake produced by Formula 1 cars as they cut through the air at high speeds. This wake disrupts the trailing car's airflow, causing instability in steering and increasing the risk of accidents, particularly on high-speed straights. With regulations encouraging closer racing, turbulent wake became a significant safety concern.
+    </p>
+    <p>
+      Determined to find a solution, I focused on redesigning the aerodynamics of Formula 1 cars to create a wake with a smoother, more laminar flow, minimizing disruptions for trailing cars. Using SolidWorks, I performed simulations to analyze and optimize airflow starting at the front wing, which plays a crucial role in determining the flow over the entire car. The initial flow generated by the front wing heavily influenced how air separated at the rear of the car, which directly impacted the wake's turbulence. By modifying the front wing geometry, I aimed to control airflow from the onset, ensuring smoother transitions and reducing turbulence at the car’s rear.
+    </p>
+    <p>
+      As part of my research, I studied simulation data from previous generations of Formula 1 cars and observed a progressive decrease in turbulent wake over the years. This analysis revealed methods used by engineers to mitigate turbulence, such as the elimination of the Y250 vortex. By eliminating this vortex in my design, I reduced accelerated airflow through the front wing, which contributed to smoother airflow around the car. I adopted a similar method but employed a more aggressive approach to achieve a fully laminar flow at the car’s rear.
+    </p>
+    <p>
+      In addition to eliminating the Y250 vortex, I incorporated active aerodynamics into my design. Active aerodynamics involve adjustable components such as movable flaps and winglets that dynamically respond to driving conditions. These components optimized the car's aerodynamic profile by adjusting airflow patterns in real time. For example, I designed movable rear wing elements that could adjust their angle of attack to direct airflow more precisely, minimizing turbulence at high speeds while maintaining downforce for cornering stability.
+    </p>
+    <p>
+      The combination of these strategies—eliminating the Y250 vortex, employing active aerodynamic components, and optimizing airflow from the front wing—allowed me to significantly reduce turbulent wake while enhancing overall vehicle stability. Using MATLAB, I also modeled stress distributions on key components to ensure they could withstand intense forces at high speeds.
+    </p>
+    <p>
+      The findings from this project demonstrated the feasibility of reducing wake turbulence to achieve safer and more competitive racing. My simulations confirmed that my design achieved a smoother, more laminar airflow, benefiting trailing cars. The results of my research were published on ResearchGate, where they were recognized for their innovation and potential application in motorsport engineering.
+    </p>
+  
+    <h3>Mentorship Program – Polygence Research Initiative</h3>
+    <p id="projParagraph3">
+      As a mentor, I guided over 15 students on advanced research projects spanning STEM and the humanities. I helped students conduct thorough literature reviews using databases like PubMed and IEEE Xplore, refine their research methodologies, and perform data analysis. These efforts enabled several mentees to publish their work in reputable journals such as the American Journal of Student Research.
+    </p>
+    <p>
+      One key achievement was assisting a student in publishing quantum mechanics research in a prestigious journal. I also co-authored a paper titled "How Can Self-Driving Technology Be Improved Upon to Make Sure It Can Be Safer for People to Use?" This paper explored challenges in automating driving technologies and proposed a Vehicle-to-Vehicle (V2V) communication framework. By unifying critical information, vehicles could share data on speed, acceleration, deceleration, and position, allowing proactive responses to sudden braking and improved safety.
+    </p>
+    <p>
+      This mentorship experience not only strengthened my ability to communicate complex ideas effectively but also offered opportunities to collaborate on innovative solutions to real-world challenges. Through mentoring and co-authorship, I contributed to fostering academic success and advancing cutting-edge developments.
+    </p>
+  </section>
+  
+  <!-- SKILLS SECTION -->
+<section id="skills" class="container">
+    <h2 id="skillsTitle">Skills</h2>
+  
+    <style>
+      /* Left align subheadings */
+      h2 {
+        text-align: left;
+        margin: 20px 0;
+      }
+  
+      /* Apply text-align-last to paragraphs */
+      p {
+        text-align: justify;
+        text-align-last: left;
+        margin-bottom: 10px;
+      }
+    </style>
+  
+    <p id="skillsParagraph1">
+      <strong>MATLAB (Simulink)</strong><br />
+      At Penn State University, I have applied MATLAB extensively in courses such as Programming for Engineers with MATLAB (ME 200) and other engineering projects. I worked on tasks like analyzing stress on Formula 1 car components and optimizing energy-efficient designs. In the Nittany Motorsports Formula SAE Team, I used MATLAB to simulate suspension dynamics and evaluate vehicle performance under different conditions. My experience also includes modeling dynamic systems and refining algorithms using Simulink for practical engineering applications.
+    </p>
+  
+    <p id="skillsParagraph2">
+      <strong>SolidWorks</strong><br />
+      In Engineering Design (ME 340) and during the Energy-Efficient Mining Truck Challenge with Wabtec Corporation, I utilized SolidWorks to design and simulate detailed 3D models. These included piezoelectric systems integrated into truck tires and vehicle components for the Autonomous Vehicle Team. I also conducted finite element analysis (FEA) to assess the stress, deformation, and durability of mechanical systems, ensuring optimized designs for real-world applications.
+    </p>
+  
+    <p id="skillsParagraph3">
+      <strong>AutoCAD</strong><br />
+      I developed proficiency in AutoCAD through AutoCAD Engineering Applications (EDGSN 460), mastering the creation of technical drawings and detailed schematics. These skills were further applied to projects such as designing layouts for wind turbine blades as part of the Wind Energy Club. I am currently advancing my AutoCAD skills through additional coursework to tackle more complex design challenges and achieve greater proficiency.
+    </p>
+  
+    <p id="skillsParagraph4">
+      <strong>Finite Element Analysis</strong><br />
+      My experience with finite element analysis includes coursework like Computational Fluid Dynamics, where I analyzed stress distributions and performed mesh refinement. Using SolidWorks and MATLAB, I validated design concepts for vehicle components and conducted error analysis to improve simulation accuracy. This expertise enables me to evaluate mechanical systems and optimize designs for reliability.
+    </p>
+  
+    <p id="skillsParagraph5">
+      <strong>Quantum Mechanics</strong><br />
+      As part of my physics minor, I completed coursework in relativity and quantum theory, focusing on foundational principles like the Schrödinger equation and quantum systems in one and three dimensions. I applied these concepts to real-world topics in atomic and molecular physics, gaining insight into phenomena such as quantum tunneling and energy states. This preparation has equipped me for advanced studies and interdisciplinary applications in physics and engineering.
+    </p>
+  </section>
+  
+  
+
+  <!-- CONTACT SECTION -->
+  <section id="contact" class="container">
+    <h2 id="contactTitle">Contact</h2>
+    <p style="text-align: justify; text-align-last: center;" id="contactPara">
+      You can also reach me using the icons below. Thank you for stopping by!
+    </p>
+    <div class="contact-tiles">
+      <!-- Larger square icons, no text, each different color -->
+      <a href="mailto:talatirutej@gmail.com" class="contact-tile tile-mail" title="Mail">
+        <i class="fa fa-envelope"></i>
+      </a>
+      <a href="tel:+18148529229" class="contact-tile tile-usa" title="USA">
+        <i class="fa fa-phone"></i>
+      </a>
+      <a href="tel:+919820401586" class="contact-tile tile-india" title="India">
+        <i class="fa fa-phone"></i>
+      </a>
+      <a href="https://linkedin.com/in/rutejtalati" target="_blank" class="contact-tile tile-ln" title="LinkedIn">
+        <i class="fa fa-linkedin"></i>
+      </a>
+    </div>
+  </section>
+
+  <!-- BACK TO TOP TILE (center at bottom) -->
+  <div class="back-to-top" onclick="window.scrollTo({top: 0, behavior:'smooth'});">
+    Back to Top
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    &copy; <span id="footerYear"></span> <span id="logoTextFooter">Rutej Talati</span>. All Rights Reserved.
+    <div class="footer-text" id="currentDate"></div>
+  </footer>
+
+  <!-- FUN FACTS MODAL -->
+<div class="modal-overlay" id="funFactModal">
+    <div class="modal-content">
+      <h2>Fun Facts – Get to Know Me! 🚀</h2>
+      <div class="modal-scroll-content">
+        <p><strong>🤖 World Robotics Olympiad – Representing India!</strong><br />
+          Ever imagined building a robot and taking it across the world to compete? Well, that’s exactly what I did! Competing in robotics olympiads has always been a wild ride, but the <strong>World Robotics Olympiad 2019</strong> was something else entirely. I had the incredible honor of representing <strong>India on the global stage</strong>, showcasing cutting-edge robots we built from scratch! It was an unforgettable whirlwind of innovation, teamwork, and meeting brilliant minds from around the world. Honestly, if there’s one thing cooler than robots, it’s <em>robots competing internationally</em>!
+        </p>
+        <p><strong>🏎️ Formula 1 Track Bucket List – Let’s Go Racing!</strong><br />
+          Fast cars, roaring engines, and adrenaline-pumping action—Formula 1 has my heart! And guess what? I’m on a <strong>mission</strong> to visit <strong>every single F1 track</strong> around the globe. From speeding through the legendary straights of <strong>Monza</strong> to conquering the hairpin turns of <strong>Suzuka</strong>, I want to experience it all! Ultimate bucket list goal? Watching a live <strong>Grand Prix</strong> at every circuit. If there’s a race happening somewhere, you can bet I’m already dreaming about being there, soaking in the thrill and energy of motorsport’s grandest events!
+        </p>
+        <p><strong>🎹 Piano Power – Music for the Soul!</strong><br />
+          Move over, Beethoven—I’ve got this! Playing the piano has been my creative escape for years. Whether it’s the timeless classics of <strong>Chopin</strong>, the dramatic flair of movie soundtracks, or a little something jazzy, I love bringing music to life. It’s my <strong>ultimate stress buster</strong>, my go-to when life needs a little melody. Bonus points: I can totally set the vibe at parties or help you relax with a soothing tune. Music keeps me grounded, focused, and endlessly inspired. 🎶
+        </p>
+        <p><strong>🥋 Black Belt & Silver Medallist – Kicking Goals!</strong><br />
+          Yes, I can throw a mean roundhouse kick! Holding a <strong>black belt in Mixed Martial Arts</strong> means I’ve mastered the art of precision, strategy, and strength. But wait, there’s more—I proudly took home the <strong>silver medal</strong> at the <strong>World Karate Tournament</strong>, where I battled it out with some of the best martial artists on the planet. It was a test of grit, determination, and countless hours of training. Whether it’s MMA or karate, these experiences taught me one key thing: <em>never back down</em>!
+        </p>
+      </div>
+      <button class="modal-close-btn" id="closeModalBtn">Close</button>
+    </div>
+  </div>
+  
+  
+  
+
+  <!-- THANK YOU NOTE -->
+  <div style="text-align: center; margin-bottom: 40px; font-size: 1rem;" id="thankNote">
+    Thank you for visiting my website!
+  </div>
+
+  <!-- SCRIPT -->
+  <script>
+    /***************************************************************
+     * TEXT DATA: EN vs DE 
+     ***************************************************************/
+    const textEN = {
+      logoEl: "Rutej Talati",
+      navEducation: "Education",
+      navExperience: "Experience",
+      navProjects: "Projects",
+      navSkills: "Skills",
+      navContact: "Contact",
+
+      typedLine1: "Welcome to my professional portfolio!",
+      typedLine2: "Currently pursuing a Bachelor's degree in Mechanical Engineering with Minor in Physics",
+      typedLine3: "Eager to explore internship and co-op opportunities!",
+
+      resumeBtn: "Resume",
+      funFactBtn: "Fun Fact",
+      heroPara: "If you're in a rush, you can download my resume by clicking the button. <br/>Otherwise, enjoy my online curriculum vitae!",
+
+      eduTitle: "Education",
+      eduParagraph1: `At Pennsylvania State University, University Park, PA, I am pursuing a Bachelor of Science in Mechanical Engineering with a Minor in Physics and maintaining a GPA of 3.50...`,
+      eduParagraph2: `I completed my Cambridge A-Levels at SVKM International School, Mumbai, India, graduating in 2022...`,
+
+      expTitle: "Experience",
+      expParagraph1: `During my internship at Polygence...`,
+      expParagraph2: `As a Teaching Assistant for the Mechanical Engineering Department...`,
+      expParagraph3: `As a Teaching Assistant for the Physics Department...`,
+
+      projTitle: "Projects",
+      projParagraph1: `As part of a course at Penn State University, I was tasked with developing a sustainable model...`,
+      projParagraph2: `My passion for Formula 1 and its challenges in ensuring safer racing...`,
+      projParagraph3: `As a mentor, I guided over 15 students on advanced research projects...`,
+
+      skillsTitle: "Skills",
+      skillsParagraph1: `At Penn State University, I have applied MATLAB extensively in courses such as Programming for Engineers...`,
+      skillsParagraph2: `In Engineering Design (ME 340) and during the Energy-Efficient Mining Truck Challenge...`,
+      skillsParagraph3: `I developed proficiency in AutoCAD through AutoCAD Engineering Applications...`,
+      skillsParagraph4: `My experience with finite element analysis includes coursework like Computational Fluid Dynamics...`,
+      skillsParagraph5: `As part of my physics minor, I completed coursework in relativity and quantum theory...`,
+
+      contactTitle: "Contact",
+      contactPara: "You can also reach me using the icons below. Thanks for stopping by!",
+
+      thankNote: "Thank you for visiting my website!"
+    };
+
+    const textDE = {
+  logoEl: "Rutej Talati",
+  navEducation: "Ausbildung",
+  navExperience: "Erfahrung",
+  navProjects: "Projekte",
+  navSkills: "Fähigkeiten",
+  navContact: "Kontakt",
+
+  typedLine1: "Willkommen in meinem professionellen Portfolio!",
+  typedLine2: "Derzeit studiere ich Maschinenbau mit Nebenfach Physik",
+  typedLine3: "Ich suche Praktika und Kooperationsmöglichkeiten!",
+
+  resumeBtn: "Lebenslauf",
+  funFactBtn: "Fun Fact",
+  heroPara: "Wenn Sie es eilig haben, können Sie meinen Lebenslauf herunterladen. <br/>Andernfalls viel Spaß mit meinem Online-Lebenslauf!",
+
+  /* EDUCATION */
+  eduTitle: "Ausbildung",
+  eduParagraph1: `An der Pennsylvania State University, University Park, PA, strebe ich einen Bachelor of Science in Maschinenbau mit Nebenfach Physik an und erhalte einen Notendurchschnitt von 3,50. Mein voraussichtlicher Abschluss ist im Dezember 2025. Ich wurde für meine akademische Exzellenz ausgezeichnet und habe mir einen Platz auf der Dekanatsliste für Herbst 2022, Sommer 2023 und Sommer 2024 gesichert. Meine Zeit an der Penn State hat es mir ermöglicht, ein solides Fundament im Maschinenbau aufzubauen Prinzipien, Rechenwerkzeuge und experimentelle Techniken. Ich habe aktiv an innovativen Projekten teilgenommen, die mechanische Systeme mit erneuerbaren Energielösungen und fortschrittlicher Aerodynamik integrieren und so meine analytischen Fähigkeiten und Problemlösungsfähigkeiten weiter verfeinert. Das lebendige akademische Umfeld und die hochmodernen Einrichtungen der Penn State bieten zahlreiche Möglichkeiten für berufliches Wachstum und Entwicklung.`,
+  eduParagraph2: `Ich habe mein Cambridge A-Levels an der SVKM International School in Mumbai, Indien, im Jahr 2022 abgeschlossen. Während meiner Zeit bei SVKM habe ich 2019 den ersten Platz bei der prestigeträchtigen Cambridge Science Olympiade erreicht und damit meine Fähigkeit unter Beweis gestellt, komplexe naturwissenschaftliche und technische Herausforderungen anzugehen. Meine fortgeschrittenen Studienleistungen in Physik, Mathematik und Chemie bereiteten mich auf die hohen Anforderungen der Hochschulbildung vor. Zusätzlich zu meinen akademischen Leistungen beteiligte ich mich aktiv an MINT-Bildungsinitiativen und innovationsorientierten Aktivitäten und trug so zur Kultur meiner Schule bei, die von akademischer Exzellenz und kreativer Problemlösung geprägt ist.`,
+
+  /* EXPERIENCE */
+  expTitle: "Erfahrung",
+  expParagraph1: `Während meines Praktikums bei Polygence habe ich an fortschrittlicher aerodynamischer Forschung gearbeitet, die darauf abzielte, die Leistung und Sicherheit von Formel-1-Fahrzeugen und erneuerbaren Energiesystemen zu verbessern. Mithilfe von ANSYS Fluent für CFD-Simulationen analysierte ich turbulente und laminare Luftströme um Fahrzeugkomponenten wie den Frontflügel, um die aerodynamische Effizienz zu optimieren. Diese Simulationen informierten Änderungen zur Verbesserung des Anpressdrucks und zur Reduzierung des Luftwiderstands, was zu stabileren und leistungsfähigeren Designs für extreme Rennbedingungen beitrug.
+
+Darüber hinaus verwendete ich MATLAB, um Spannungsverteilungen am Frontflügel unter verschiedenen Strömungsbedingungen zu modellieren und zu analysieren und sicherzustellen, dass die Designs den Anforderungen an die Haltbarkeit entsprachen. Für Anwendungen im Bereich erneuerbare Energien entwarf und optimierte ich mit SolidWorks und MATLAB Windturbinenblätter mit dem Ziel, die Energieausbeute zu steigern und die strukturelle Integrität zu verbessern. Meine Forschung erstreckte sich auch auf quantenbasierte Innovationen, bei denen ich die aerodynamischen Auswirkungen neuer Materialien untersuchte.
+
+Diese Forschung mündete in einer auf ResearchGate veröffentlichten Arbeit zur Aerodynamik in der Formel 1, die innovative Lösungen für Luftstromprobleme aufzeigt. Meine Beiträge wurden mit dem Young Polygence Research Excellence Award gewürdigt, was die Bedeutung meiner Arbeit zur Verbesserung der Simulationsgenauigkeit und praktischen Anwendung in der Hochgeschwindigkeits-Aerodynamik unterstreicht.`,
+  expParagraph2: `Als Teaching Assistant für die Abteilung Maschinenbau leitete ich mehrere Revisionssitzungen, um Studenten auf Prüfungen in Fächern wie Thermodynamik und computergestützten Werkzeugen vorzubereiten. Diese Sitzungen umfassten die Aufschlüsselung komplexer theoretischer Konzepte, das Lösen von Übungsaufgaben und die Vermittlung von Strategien zum Umgang mit herausfordernden Fragen. Mein Ziel war es, ihr Verständnis und ihr Vertrauen in die Anwendung dieser Prinzipien zu stärken.
+
+Während der Laborsitzungen demonstrierte ich die Nutzung von Ingenieurssoftware wie SolidWorks für 3D-Modellierung und Simulation, um den Studenten bei der Gestaltung und Validierung mechanischer Komponenten zu helfen. Außerdem begleitete ich die Studenten bei Thermodynamik-Experimenten, einschließlich der Analyse des Wärmeübergangs in Rippensystemen und der Effizienzmessung eines Rankine-Zyklus-Aufbaus. Ich gab Einblicke in das experimentelle Design, die Datenerfassung und die praktischen Auswirkungen thermodynamischer Prinzipien auf reale Systeme.
+
+Diese praktischen Erfahrungen stärkten nicht nur die technischen Fähigkeiten der Studenten, sondern ermöglichten es ihnen auch, Verbindungen zwischen theoretischem Wissen und praktischen Anwendungen herzustellen, wodurch ein tieferes Verständnis der Konzepte des Maschinenbaus gefördert wurde.`,
+  expParagraph3: `Als Teaching Assistant für die Abteilung Physik hielt ich Sprechstunden ab, um Studenten bei der Beherrschung fortgeschrittener Themen der Quantenmechanik und Relativität zu unterstützen. Ich arbeitete eng mit den Studenten zusammen, um ihnen Konzepte wie Zeitdilatation, die unendliche Potentialtopf-Gleichung und die Schrödinger-Gleichung zu erklären und komplexe mathematische Formulierungen in verständliche Konzepte zu übersetzen. Ich begleitete die Studenten beim Lösen von Gleichungen, beim Visualisieren von Quantenzuständen und bei der Anwendung dieser Prinzipien auf reale physikalische Probleme.
+
+Zur praktischen Vertiefung der Lerninhalte organisierte ich während des Semesters Revisionssitzungen. Eine bemerkenswerte Sitzung beinhaltete einen Besuch des Friedman Observatory an der Penn State, wo ich die praktischen Auswirkungen der Zeitdilatation durch die Beobachtung von Satelliten demonstrierte und ihr Verhalten in der Umlaufbahn relativ zum Erdbezugssystem diskutierte. Während dieser Sitzung stellte ich auch Konzepte zur kosmischen Hintergrundstrahlung vor und verband diese mit Quantenfluktuationen im frühen Universum. Diese praxisnahen Erfahrungen halfen den Studenten, theoretisches Wissen mit beobachtbaren Phänomenen zu verknüpfen und ein tieferes Verständnis der modernen Physik zu entwickeln.
+
+Durch diese Bemühungen konnte ich das Engagement der Studenten steigern und ihr Verständnis für einige der grundlegendsten und spannendsten Themen der Physik vertiefen, sodass sie gut auf Prüfungen und weiterführende Studien in diesem Bereich vorbereitet waren.`,
+
+  /* PROJECTS */
+  projTitle: "Projekte",
+  projParagraph1: `Im Rahmen eines Kurses an der Penn State University wurde ich beauftragt, ein nachhaltiges Modell für Wabtec-Bergbau-LKWs zu entwickeln, das deren Abhängigkeit von fossilen Brennstoffen reduziert und innovative Energielösungen integriert. Ich nannte dieses Projekt CATBAT, um die Integration von Oberleitungsdrähten und Batteriestrom für nachhaltigen Betrieb zu betonen.
+
+Durch umfangreiche Recherchen und Konsultationen mit Professoren und Assistenzprofessoren, die sich auf Energiesysteme spezialisiert haben, bewertete ich verschiedene erneuerbare Energiequellen und reduzierte die Optionen auf Piezostrom und Biokraftstoffe. Letztendlich entschied ich mich für Piezostrom aufgrund seiner innovativen, nachhaltigen und autarken Eigenschaften.
+
+Für dieses Projekt entwarf ich ein System, das piezoelektrische Platten in die großen Reifen des Bergbau-LKWs integrierte. Diese Platten nutzten den Druck, der während des Betriebs in den Reifen entsteht, zur Stromerzeugung, welcher in Lithium-Ionen-Batterien an Bord gespeichert wurde. Dieses System lieferte zuverlässige Energie, die den LKW bei Geschwindigkeiten von bis zu 40 km/h antreiben konnte und gleichzeitig als Backup für netzunabhängige Einsätze diente.
+
+Um die Nachhaltigkeit weiter zu verbessern, integrierte das CATBAT-System einen flexiblen Stromabnehmerarm, der an Oberleitungsdrähten angeschlossen war. Dieser ausziehbare Arm ermöglichte eine effiziente Energieübertragung von externen Quellen auf den LKW, wodurch ein kontinuierlicher Betrieb bei gleichzeitiger Reduzierung der Abhängigkeit von fossilen Brennstoffen sichergestellt wurde. Zur Unterstützung des Systems schlug ich teleskopierbare Trägerstangen vor, die die Drähte in einer Höhe von etwa 30 Fuß aufhängen und eine schnelle Installation sowie Skalierbarkeit für verschiedene Bergbaustandorte ermöglichen.
+
+Die Kombination aus Piezostrom, Lithium-Ionen-Batterien und dem Oberleitungssystem reduzierte die Umweltbelastung und die Betriebskosten des LKWs erheblich. Mit SolidWorks modellierte ich die LKW-Komponenten und -Systeme und stellte die mechanische Stabilität und Machbarkeit sicher. MATLAB-Simulationen wurden eingesetzt, um die Energieeffizienz, die Systemhaltbarkeit und die Spannungsverteilungen zu analysieren und das Design zu validieren.
+
+Dieses innovative Projekt wurde für sein Potenzial, die Nachhaltigkeit von Schwerindustrie-Fahrzeugen zu revolutionieren, anerkannt. Ich hatte die Ehre, CATBAT der gesamten Ingenieursfakultät und den Vertretern der Wabtec Corporation zu präsentieren und erhielt Anerkennung für die Kreativität, Machbarkeit und den transformativen Einfluss auf den Bergbaubetrieb.`,
+  projParagraph2: `Meine Leidenschaft für die Formel 1 und deren Herausforderungen, sichereres Rennen zu gewährleisten, inspirierte mich dazu, dieses Projekt während der High School in Angriff zu nehmen. Das Projekt konzentrierte sich auf die Problematik des turbulenten Nachlaufs, der von Formel-1-Autos erzeugt wird, wenn sie mit hoher Geschwindigkeit durch die Luft fahren. Dieser Nachlauf stört den Luftstrom des folgenden Autos, was die Stabilität der Lenkung beeinträchtigt und das Unfallrisiko, insbesondere auf Hochgeschwindigkeitsgeraden, erhöht. Da die Vorschriften ein engeres Rennen fördern, wurde der turbulente Nachlauf zu einem bedeutenden Sicherheitsproblem.
+
+Entschlossen, eine Lösung zu finden, konzentrierte ich mich darauf, die Aerodynamik von Formel-1-Autos neu zu gestalten, um einen Nachlauf mit einem glatteren, laminaren Strömungsverhalten zu erzeugen und die Störungen für nachfolgende Autos zu minimieren. Mit SolidWorks führte ich Simulationen durch, um den Luftstrom zu analysieren und zu optimieren, beginnend am Frontflügel, der eine entscheidende Rolle bei der Strömungsführung über das gesamte Auto spielt. Der initiale Luftstrom, der durch den Frontflügel erzeugt wird, beeinflusst stark die Trennung der Luft am Heck des Autos, was direkt die Turbulenz des Nachlaufs beeinflusst. Durch die Modifikation der Geometrie des Frontflügels wollte ich den Luftstrom von Anfang an kontrollieren, um glattere Übergänge und weniger Turbulenzen am Heck des Autos zu gewährleisten.
+
+Im Rahmen meiner Forschung studierte ich Simulationsdaten früherer Generationen von Formel-1-Autos und stellte einen progressiven Rückgang des turbulenten Nachlaufs im Laufe der Jahre fest. Diese Analyse offenbarte Methoden, die Ingenieure zur Reduzierung der Turbulenz verwendet hatten, wie beispielsweise die Eliminierung des Y250-Wirbels. Durch die Eliminierung dieses Wirbels in meinem Design reduzierte ich den beschleunigten Luftstrom durch den Frontflügel, was zu einem glatteren Luftstrom um das Auto beitrug. Ich wendete eine ähnliche Methode an, jedoch mit einem aggressiveren Ansatz, um mein Ziel einer vollständig laminaren Strömung am Heck des Autos zu erreichen.
+
+Zusätzlich zur Eliminierung des Y250-Wirbels integrierte ich aktive Aerodynamik in mein Design. Aktive Aerodynamik umfasst anpassbare Komponenten wie bewegliche Klappen und Flügel, die dynamisch auf die Fahrbedingungen reagieren. Diese Komponenten optimierten das aerodynamische Profil des Autos, indem sie die Luftströmungsmuster in Echtzeit anpassten. Beispielsweise entwarf ich bewegliche Heckflügelelemente, die ihren Anstellwinkel anpassen konnten, um den Luftstrom präziser zu lenken, Turbulenzen bei hohen Geschwindigkeiten zu minimieren und gleichzeitig den Abtrieb für die Kurvenstabilität aufrechtzuerhalten.
+
+Die Kombination dieser Strategien – die Eliminierung des Y250-Wirbels, der Einsatz aktiver aerodynamischer Komponenten und die Optimierung des Luftstroms vom Frontflügel aus – ermöglichte es mir, den turbulenten Nachlauf erheblich zu reduzieren und gleichzeitig die Gesamtstabilität des Fahrzeugs zu verbessern. Mit MATLAB modellierte ich außerdem die Spannungsverteilungen auf den Schlüsselkomponenten, um sicherzustellen, dass die neu gestalteten Elemente den intensiven Kräften standhalten, die bei Hochgeschwindigkeitsrennen auftreten.
+
+Die Ergebnisse dieses Projekts zeigten die Machbarkeit der Reduzierung von Nachlaufturbulenzen, um sichereres und wettbewerbsfähigeres Rennen zu ermöglichen. Meine Simulationen bestätigten, dass mein Design einen glatteren, laminaren Luftstrom erzeugte, der den nachfolgenden Autos zugutekam. Die Ergebnisse meiner Forschung wurden auf ResearchGate veröffentlicht, wo sie für ihre Innovation und potenzielle Anwendung im Motorsport-Engineering anerkannt wurden.`,
+  projParagraph3: `Als Mentor betreute ich über 15 Studenten bei fortgeschrittenen Forschungsprojekten in den Bereichen MINT und Geisteswissenschaften. Ich half den Studenten, gründliche Literaturrecherchen mit Datenbanken wie PubMed und IEEE Xplore durchzuführen, ihre Forschungsmethoden zu verfeinern und Datenanalysen durchzuführen. Diese Mentoring-Aktivitäten ermöglichten es mehreren Mentees, ihre Arbeiten in renommierten Zeitschriften wie dem American Journal of Student Research zu veröffentlichen.
+
+Einer meiner größten Erfolge war die Unterstützung eines Studenten bei der Veröffentlichung seiner Forschung über Quantenmechanik in einer angesehenen Zeitschrift. Darüber hinaus war ich Mitautor eines Artikels mit dem Titel "Wie kann die Technologie des autonomen Fahrens verbessert werden, um sicherzustellen, dass sie für die Menschen sicherer ist?" Diese Forschung untersuchte die Herausforderungen der Automatisierung von Fahrtechnologien und schlug ein Framework für ein Vehicle-to-Vehicle-Communication-(V2V)-System vor. Der Artikel behandelte die Unvollkommenheiten der Technologie des autonomen Fahrens und konzentrierte sich darauf, wie Fahrzeuge über ein einheitliches Netzwerk kritische Informationen austauschen können, um die Sicherheit und Effizienz zu erhöhen.
+
+Das vorgeschlagene V2V-Kommunikationssystem ermöglicht es Fahrzeugen, unabhängig vom Hersteller, sich über Mobilfunknetze zu verbinden und Informationen wie Geschwindigkeit, Beschleunigung, Verzögerung und Position relativ zu anderen Autos auszutauschen. Dieses Framework ermöglicht es den Fahrzeugen, proaktiv auf Situationen wie plötzliches Bremsen zu reagieren und so Unfälle zu vermeiden. Das Netzwerk unterstützt auch Notszenarien, in denen Einsatzfahrzeuge Signale an umliegende Autos senden können, um Platz zu schaffen, oder die Polizei Autos signalisieren kann, anzuhalten. Darüber hinaus umfasst das Framework Vehicle-to-Infrastructure-(V2I)-Kommunikation, sodass Ampeln und Baustellen mit den Fahrzeugen kommunizieren können, um den Verkehr zu regeln und Fahrzeuge effizient umzuleiten. Im Gegensatz zu den derzeitigen V2V- und V2X-Technologien bietet dieser Ansatz eine zusätzliche Sicherheitsebene für autonome Systeme, wodurch sie für die öffentliche Nutzung zuverlässiger werden.
+
+Diese Mentoring-Erfahrung stärkte nicht nur meine Fähigkeit, komplexe Ideen effektiv zu kommunizieren, sondern bot auch Gelegenheiten, gemeinsam an innovativen Lösungen für reale Herausforderungen zu arbeiten. Durch die Betreuung und Mitautorenschaft von Forschungsarbeiten trug ich dazu bei, akademischen Erfolg zu fördern und bahnbrechende technologische Entwicklungen voranzutreiben.`,
+
+  /* SKILLS */
+  skillsTitle: "Fähigkeiten",
+  skillsParagraph1: `An der Penn State University habe ich MATLAB umfassend in Kursen wie "Programming for Engineers with MATLAB" (ME 200) und anderen Ingenieurprojekten eingesetzt. Ich arbeitete an Aufgaben wie der Analyse von Spannungen an Formel-1-Komponenten und der Optimierung energieeffizienter Designs. Im Nittany Motorsports Formula SAE Team habe ich MATLAB genutzt, um die Dynamik der Aufhängung zu simulieren und die Fahrzeugleistung unter verschiedenen Bedingungen zu bewerten. Meine Erfahrung umfasst auch die Modellierung dynamischer Systeme und die Verfeinerung von Algorithmen mit Simulink für praktische ingenieurtechnische Anwendungen.`,
+  skillsParagraph2: `Im Kurs "Engineering Design" (ME 340) und während der Herausforderung zum energieeffizienten Bergbau-LKW mit der Wabtec Corporation habe ich SolidWorks verwendet, um detaillierte 3D-Modelle zu entwerfen und zu simulieren. Dazu gehörten piezoelektrische Systeme, die in LKW-Reifen integriert wurden, sowie Fahrzeugkomponenten für das Team Autonomes Fahrzeug. Ich habe auch finite Elemente-Analysen (FEA) durchgeführt, um Spannungen, Verformungen und die Haltbarkeit mechanischer Systeme zu bewerten und sicherzustellen, dass die Designs für reale Anwendungen optimiert sind.`,
+  skillsParagraph3: `Ich habe mir fundierte Kenntnisse in AutoCAD durch den Kurs "AutoCAD Engineering Applications" (EDGSN 460) angeeignet, in dem ich technische Zeichnungen und detaillierte Schaltpläne erstellt habe. Diese Fähigkeiten habe ich in Projekten wie der Gestaltung von Layouts für Windturbinenblätter im Rahmen des Wind Energy Clubs angewendet. Derzeit vertiefe ich meine AutoCAD-Kenntnisse durch zusätzliche Kurse, um komplexere Konstruktionsaufgaben zu bewältigen und eine höhere Fachkompetenz zu erreichen.`,
+  skillsParagraph4: `Meine Erfahrung mit der Finite-Elemente-Analyse umfasst Kurse wie Computational Fluid Dynamics, in denen ich Spannungsverteilungen analysiert und die Netzverfeinerung durchgeführt habe. Mithilfe von SolidWorks und MATLAB habe ich Designkonzepte für Fahrzeugkomponenten validiert und Fehleranalysen durchgeführt, um die Simulationsgenauigkeit zu verbessern. Diese Expertise ermöglicht es mir, mechanische Systeme zu bewerten und Designs auf Zuverlässigkeit zu optimieren.`,
+  skillsParagraph5: `Im Rahmen meines Physik-Nebenfachs habe ich Kurse in Relativitätstheorie und Quantenmechanik absolviert, wobei der Schwerpunkt auf grundlegenden Prinzipien wie der Schrödinger-Gleichung und Quantensystemen in einer und drei Dimensionen lag. Ich habe diese Konzepte auf praxisnahe Themen der Atom- und Molekularphysik angewendet und Einblicke in Phänomene wie Quantentunnelung und Energieniveaus gewonnen. Diese Vorbereitung hat mich für weiterführende Studien und interdisziplinäre Anwendungen in Physik und Ingenieurwesen qualifiziert.`,
+
+  contactTitle: "Kontakt",
+  contactPara: "Sie können mich auch über die unten gezeigten Symbole erreichen. Vielen Dank für Ihren Besuch!",
+
+  thankNote: "Vielen Dank für Ihren Besuch auf meiner Website!"
+};
+
+
+    /***************************************************************
+     * DETECT TIME (>=18 => dark, else light) + THEME
+     ***************************************************************/
+    (function autoDetectTheme() {
+      const now = new Date();
+      const hour = now.getHours();
+      const isEvening = (hour >= 18);
+      const savedTheme = localStorage.getItem("theme");
+
+      if (!savedTheme) {
+        if (isEvening) {
+          document.body.classList.remove("light-mode");
+          document.body.classList.add("dark-mode");
+        } else {
+          document.body.classList.remove("dark-mode");
+          document.body.classList.add("light-mode");
+        }
+      } else {
+        if (savedTheme === "light") {
+          document.body.classList.remove("dark-mode");
+          document.body.classList.add("light-mode");
+        } else {
+          document.body.classList.remove("light-mode");
+          document.body.classList.add("dark-mode");
+        }
+      }
+    })();
+
+    /***************************************************************
+     * THEME TOGGLE (inverted label)
+     ***************************************************************/
+    const themeToggleBtn = document.getElementById("themeToggleBtn");
+    function updateToggleLabel() {
+      if (document.body.classList.contains("dark-mode")) {
+        themeToggleBtn.textContent = "Light";
+      } else {
+        themeToggleBtn.textContent = "Dark";
+      }
+    }
+    themeToggleBtn.addEventListener("click", () => {
+      if (document.body.classList.contains("dark-mode")) {
+        document.body.classList.remove("dark-mode");
+        document.body.classList.add("light-mode");
+        localStorage.setItem("theme", "light");
+      } else {
+        document.body.classList.remove("light-mode");
+        document.body.classList.add("dark-mode");
+        localStorage.setItem("theme", "dark");
+      }
+      updateToggleLabel();
+    });
+
+    /***************************************************************
+     * GREETING + DATE/TIME (top-right)
+     ***************************************************************/
+    const dateTimeGreeting = document.getElementById("dateTimeGreeting");
+    function updateDateTimeGreeting() {
+      const now = new Date();
+      const hour = now.getHours();
+      let greeting = "Good Evening";
+      if (hour < 12) {
+        greeting = "Good Morning";
+      } else if (hour < 18) {
+        greeting = "Good Afternoon";
+      }
+      dateTimeGreeting.textContent = greeting + " | " + now.toLocaleString();
+    }
+    updateDateTimeGreeting();
+    setInterval(updateDateTimeGreeting, 60000);
+
+    /***************************************************************
+     * FUN FACTS MODAL
+     ***************************************************************/
+    const funFactBtn = document.getElementById("funFactBtn");
+    const funFactModal = document.getElementById("funFactModal");
+    const closeModalBtn = document.getElementById("closeModalBtn");
+
+    funFactBtn.addEventListener("click", () => {
+      funFactModal.style.display = "flex";
+    });
+    closeModalBtn.addEventListener("click", () => {
+      funFactModal.style.display = "none";
+    });
+    window.addEventListener("click", (e) => {
+      if (e.target === funFactModal) {
+        funFactModal.style.display = "none";
+      }
+    });
+
+    /***************************************************************
+     * TYPED.JS (3 lines) - default EN
+     ***************************************************************/
+    let lines = [
+      textEN.typedLine1,
+      textEN.typedLine2,
+      textEN.typedLine3
+    ];
+    function typeLine(elementId, text, callback) {
+      new Typed(elementId, {
+        strings: [text],
+        typeSpeed: 40,
+        showCursor: false,
+        loop: false,
+        onComplete: callback
+      });
+    }
+    function startTyping(textArr) {
+      // Clear typed placeholders
+      document.getElementById("typed1").textContent = "";
+      document.getElementById("typed2").textContent = "";
+      document.getElementById("typed3").textContent = "";
+
+      typeLine("#typed1", textArr[0], () => {
+        typeLine("#typed2", textArr[1], () => {
+          typeLine("#typed3", textArr[2], () => {});
+        });
+      });
+    }
+
+    /***************************************************************
+     * SCROLL INDICATOR
+     ***************************************************************/
+    function moveIndicator() {
+      const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = (winScroll / height) * 100;
+      document.getElementById("myBar").style.width = scrolled + "%";
+    }
+
+    /***************************************************************
+     * DATE in FOOTER
+     ***************************************************************/
+    const footerYear = document.getElementById("footerYear");
+    const currentDateEl = document.getElementById("currentDate");
+    const dateObj = new Date();
+    footerYear.textContent = dateObj.getFullYear();
+    currentDateEl.textContent = dateObj.toDateString();
+
+    /***************************************************************
+     * INITIAL LABEL for THEME TOGGLE
+     ***************************************************************/
+    updateToggleLabel();
+
+    /***************************************************************
+     * SEARCH BUTTON - bottom-right
+     ***************************************************************/
+    const searchBtn = document.getElementById("searchBtn");
+    searchBtn.addEventListener("click", () => {
+      const query = prompt("Search for text in this webpage:");
+      if (!query) return;
+
+      const bodyText = document.body.innerText.toLowerCase();
+      const searchTerm = query.toLowerCase();
+      const index = bodyText.indexOf(searchTerm);
+
+      if (index === -1) {
+        alert("No matching info found on this page!");
+      } else {
+        alert("We found something matching your search. Scrolling there...");
+        const allParagraphs = document.querySelectorAll("p, h2, h3");
+        for (const el of allParagraphs) {
+          if (el.innerText.toLowerCase().includes(searchTerm)) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            el.style.background = "yellow";
+            el.style.color = "black";
+            setTimeout(() => {
+              el.style.background = "";
+              el.style.color = "";
+            }, 3000);
+            break;
+          }
+        }
+      }
+    });
+
+    /***************************************************************
+     * GERMAN TOGGLE
+     ***************************************************************/
+    // const langToggleBtn = document.getElementById("langToggleBtn");
+    let currentLang = "EN";
+
+    function switchToGerman() {
+      // LOGO + NAV
+      document.getElementById("logoEl").textContent = textDE.logoEl;
+      document.getElementById("navEducation").textContent = textDE.navEducation;
+      document.getElementById("navExperience").textContent = textDE.navExperience;
+      document.getElementById("navProjects").textContent = textDE.navProjects;
+      document.getElementById("navSkills").textContent = textDE.navSkills;
+      document.getElementById("navContact").textContent = textDE.navContact;
+
+      // Re-type lines in German
+      lines = [
+        textDE.typedLine1,
+        textDE.typedLine2,
+        textDE.typedLine3
+      ];
+      startTyping(lines);
+
+      // Resume / Fun Fact / hero paragraph
+      document.getElementById("resumeBtn").textContent = textDE.resumeBtn;
+      document.getElementById("funFactBtn").textContent = textDE.funFactBtn;
+      document.getElementById("heroPara").innerHTML = textDE.heroPara;
+
+      // EDUCATION
+      document.getElementById("eduTitle").textContent = textDE.eduTitle;
+      document.getElementById("eduParagraph1").textContent = textDE.eduParagraph1;
+      document.getElementById("eduParagraph2").textContent = textDE.eduParagraph2;
+
+      // EXPERIENCE
+      document.getElementById("expTitle").textContent = textDE.expTitle;
+      document.getElementById("expParagraph1").textContent = textDE.expParagraph1;
+      document.getElementById("expParagraph2").textContent = textDE.expParagraph2;
+      document.getElementById("expParagraph3").textContent = textDE.expParagraph3;
+
+      // PROJECTS
+      document.getElementById("projTitle").textContent = textDE.projTitle;
+      document.getElementById("projParagraph1").textContent = textDE.projParagraph1;
+      document.getElementById("projParagraph2").textContent = textDE.projParagraph2;
+      document.getElementById("projParagraph3").textContent = textDE.projParagraph3;
+
+      // SKILLS
+      document.getElementById("skillsTitle").textContent = textDE.skillsTitle;
+      document.getElementById("skillsParagraph1").textContent = textDE.skillsParagraph1;
+      document.getElementById("skillsParagraph2").textContent = textDE.skillsParagraph2;
+      document.getElementById("skillsParagraph3").textContent = textDE.skillsParagraph3;
+      document.getElementById("skillsParagraph4").textContent = textDE.skillsParagraph4;
+      document.getElementById("skillsParagraph5").textContent = textDE.skillsParagraph5;
+
+      // CONTACT
+      document.getElementById("contactTitle").textContent = textDE.contactTitle;
+      document.getElementById("contactPara").textContent = textDE.contactPara;
+
+      // THANK YOU NOTE
+      document.getElementById("thankNote").textContent = textDE.thankNote;
+    }
+
+    function switchToEnglish() {
+      // LOGO + NAV
+      document.getElementById("logoEl").textContent = textEN.logoEl;
+      document.getElementById("navEducation").textContent = textEN.navEducation;
+      document.getElementById("navExperience").textContent = textEN.navExperience;
+      document.getElementById("navProjects").textContent = textEN.navProjects;
+      document.getElementById("navSkills").textContent = textEN.navSkills;
+      document.getElementById("navContact").textContent = textEN.navContact;
+
+      // Re-type lines in English
+      lines = [
+        textEN.typedLine1,
+        textEN.typedLine2,
+        textEN.typedLine3
+      ];
+      startTyping(lines);
+
+      // Resume / Fun Fact / hero paragraph
+      document.getElementById("resumeBtn").textContent = textEN.resumeBtn;
+      document.getElementById("funFactBtn").textContent = textEN.funFactBtn;
+      document.getElementById("heroPara").innerHTML = textEN.heroPara;
+
+      // EDUCATION
+      document.getElementById("eduTitle").textContent = textEN.eduTitle;
+      document.getElementById("eduParagraph1").textContent = textEN.eduParagraph1;
+      document.getElementById("eduParagraph2").textContent = textEN.eduParagraph2;
+
+      // EXPERIENCE
+      document.getElementById("expTitle").textContent = textEN.expTitle;
+      document.getElementById("expParagraph1").textContent = textEN.expParagraph1;
+      document.getElementById("expParagraph2").textContent = textEN.expParagraph2;
+      document.getElementById("expParagraph3").textContent = textEN.expParagraph3;
+
+      // PROJECTS
+      document.getElementById("projTitle").textContent = textEN.projTitle;
+      document.getElementById("projParagraph1").textContent = textEN.projParagraph1;
+      document.getElementById("projParagraph2").textContent = textEN.projParagraph2;
+      document.getElementById("projParagraph3").textContent = textEN.projParagraph3;
+
+      // SKILLS
+      document.getElementById("skillsTitle").textContent = textEN.skillsTitle;
+      document.getElementById("skillsParagraph1").textContent = textEN.skillsParagraph1;
+      document.getElementById("skillsParagraph2").textContent = textEN.skillsParagraph2;
+      document.getElementById("skillsParagraph3").textContent = textEN.skillsParagraph3;
+      document.getElementById("skillsParagraph4").textContent = textEN.skillsParagraph4;
+      document.getElementById("skillsParagraph5").textContent = textEN.skillsParagraph5;
+
+      // CONTACT
+      document.getElementById("contactTitle").textContent = textEN.contactTitle;
+      document.getElementById("contactPara").textContent = textEN.contactPara;
+
+      // THANK YOU NOTE
+      document.getElementById("thankNote").textContent = textEN.thankNote;
+    }
+
+    const langToggleBtn = document.getElementById("langToggleBtn");
+    langToggleBtn.addEventListener("click", () => {
+      if (currentLang === "EN") {
+        switchToGerman();
+        currentLang = "DE";
+        langToggleBtn.textContent = "EN";
+      } else {
+        switchToEnglish();
+        currentLang = "EN";
+        langToggleBtn.textContent = "DE";
+      }
+    });
+
+    // Start typed lines in English by default
+    startTyping(lines);
+  </script>
+</body>
+</html>
